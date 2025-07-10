@@ -6,6 +6,32 @@
 
 import streamlit as st
 
+import streamlit as st
+from model import predict  # Import your model function
+
+st.set_page_config(page_title="ML App", layout="wide")
+
+# App title and description
+st.title("Machine Learning Model Deployment")
+st.write("This app uses our trained model to make predictions.")
+
+# Input section
+st.sidebar.header("Input Parameters")
+input1 = st.sidebar.slider("Feature 1", 0.0, 10.0, 5.0)
+input2 = st.sidebar.number_input("Feature 2", value=1)
+
+# Prediction button
+if st.sidebar.button("Predict"):
+    # Call your model's predict function
+    prediction = predict(input1, input2)
+    
+    # Display results
+    st.subheader("Prediction Result")
+    st.success(f"The predicted value is: {prediction}")
+    
+    # Optional: Add visualization
+    st.bar_chart({"Prediction": [prediction]})
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
