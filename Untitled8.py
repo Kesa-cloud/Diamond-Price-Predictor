@@ -20,7 +20,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 # In[ ]:
 
 
-Diamond_df = pd.read_csv("C:/Users/samgi/OneDrive/Documents/diamonds.csv")
+Diamond_df = pd.read_csv(""C:\Users\karan\OneDrive\Desktop\diamonds.csv"")
 Diamond_df.head()
 
 
