@@ -4,7 +4,7 @@
 # In[ ]:
 
 
-import streamlit as st
+
 
 import streamlit as st
 from model import predict  # Import your model function
@@ -44,9 +44,7 @@ from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 
-git add requirements.txt
-git commit -m "Add matplotlib to requirements"
-git push origin main
+
 # In[ ]:
 
 
