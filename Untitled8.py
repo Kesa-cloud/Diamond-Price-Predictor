@@ -8,95 +8,93 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 import os
 
-# Set page config with diamond theme
+# ---------------------------------------------
+# Page configuration
 st.set_page_config(
-    page_title="Diamond Price Predictor",
+    page_title="💎 Diamond Price Predictor",
     page_icon="💎",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for diamond theme
+# ---------------------------------------------
+# Custom CSS for creative styling
 st.markdown("""
-    <style>
-    .main {
-        background-color: #f8f9fa;
-    }
-    .stButton>button {
-        background-color: #4CAF50;
-        color: white;
-        border-radius: 5px;
-        padding: 10px 24px;
-        font-size: 16px;
-    }
-    .stButton>button:hover {
-        background-color: #45a049;
-    }
-    .prediction-result {
-        background-color: #e8f4f8;
-        border-left: 5px solid #2196F3;
-        padding: 20px;
-        margin: 20px 0;
-        border-radius: 5px;
-    }
-    .price-display {
-        font-size: 32px;
-        font-weight: bold;
-        color: #2196F3;
-        margin: 10px 0;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
-# App title and description
+html, body, [class*="css"] {
+    font-family: 'Montserrat', sans-serif;
+    background-image: url('https://images.unsplash.com/photo-1589330694655-d1256a5b6de8');
+    background-size: cover;
+    background-position: center;
+    color: #333333;
+}
+
+h1, h2, h3 {
+    background: linear-gradient(to right, #5A189A, #F72585);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.stButton>button {
+    background-color: #5A189A;
+    color: white;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 16px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+.stButton>button:hover {
+    background-color: #7B2CBF;
+}
+.price-display {
+    font-size: 36px;
+    font-weight: bold;
+    color: #5A189A;
+    margin: 10px 0;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ---------------------------------------------
+# App Title
 st.title("💎 Diamond Price Predictor")
-st.markdown("""
-Predict the price of your diamond based on its characteristics.  
-Adjust the parameters below and click **Predict Price** to see the estimated value.
-""")
+st.markdown("Predict the price of your diamond based on its characteristics. Adjust the parameters below and click Predict Price to see the estimated value.")
 
-# Load data and train model
+# ---------------------------------------------
+# Load and train model
 @st.cache_data
 def load_data_and_train_model():
-    # Load the diamonds dataset
-    data_path = "C:/Users/samgi/OneDrive/Documents/diamonds.csv"
-    df = pd.read_csv(data_path)
-    
-    # Data preprocessing
-    # Remove any rows with missing values
+    data_path = "C:/Users/fnasi/Downloads/diamonds.csv"
+    df = pd.read_csv(data_path).drop(columns=['Unnamed: 0'], errors='ignore')
     df = df.dropna()
-    
-    # Convert categorical variables to numerical using LabelEncoder
+
     label_encoders = {}
     categorical_cols = ['cut', 'color', 'clarity']
-    
     for col in categorical_cols:
         le = LabelEncoder()
         df[col] = le.fit_transform(df[col])
         label_encoders[col] = le
-    
-    # Prepare features and target
+
     X = df.drop('price', axis=1)
     y = df['price']
-    
-    # Split data into train and test sets
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    
-    # Train Random Forest model
+
     model = RandomForestRegressor(n_estimators=100, random_state=42)
     model.fit(X_train, y_train)
-    
-    # Evaluate model
+
     y_pred = model.predict(X_test)
     mse = mean_squared_error(y_test, y_pred)
     r2 = r2_score(y_test, y_pred)
-    
+
     return model, label_encoders, df, mse, r2
 
-# Load the model and data
 model, label_encoders, df, mse, r2 = load_data_and_train_model()
 
-# Display model performance in sidebar
+# ---------------------------------------------
+# Sidebar stats
 st.sidebar.header("Model Performance")
 st.sidebar.write(f"Mean Squared Error: {mse:.2f}")
 st.sidebar.write(f"R² Score: {r2:.2f}")
@@ -104,7 +102,8 @@ st.sidebar.write("Dataset Info:")
 st.sidebar.write(f"Total samples: {len(df)}")
 st.sidebar.write(f"Features: {len(df.columns) - 1}")
 
-# --- Input Fields ---
+# ---------------------------------------------
+# Input widgets
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -122,9 +121,9 @@ with col3:
     y = st.slider("Width (y)", float(df['y'].min()), float(df['y'].max()), 5.0, 0.1)
     z = st.slider("Height (z)", float(df['z'].min()), float(df['z'].max()), 3.0, 0.1)
 
-# --- Prediction Logic ---
+# ---------------------------------------------
+# Prediction
 if st.button("Predict Price"):
-    # Prepare input data
     input_data = pd.DataFrame({
         'carat': [carat],
         'cut': [cut],
@@ -136,16 +135,13 @@ if st.button("Predict Price"):
         'y': [y],
         'z': [z]
     })
-    
-    # Apply label encoding to categorical variables
+
     input_data['cut'] = label_encoders['cut'].transform(input_data['cut'])
     input_data['color'] = label_encoders['color'].transform(input_data['color'])
     input_data['clarity'] = label_encoders['clarity'].transform(input_data['clarity'])
-    
-    # Make prediction
+
     prediction = model.predict(input_data)
-    
-    # Display results
+
     st.balloons()
     st.markdown(f"""
     <div class="prediction-result">
@@ -153,8 +149,7 @@ if st.button("Predict Price"):
         <div class="price-display">${prediction[0]:,.2f}</div>
     </div>
     """, unsafe_allow_html=True)
-    
-    # Show the input values
+
     st.subheader("Input Parameters")
     st.json({
         "Carat": carat,
@@ -165,3 +160,15 @@ if st.button("Predict Price"):
         "Table": f"{table}%",
         "Dimensions": f"{x} × {y} × {z} mm"
     })
+
+    # ✅ Display model metrics after prediction
+    st.markdown(f"""
+    <div style="margin-top:40px;">
+        <h3>Model Summary</h3>
+        <ul>
+            <li><strong>Total samples:</strong> {len(df)}</li>
+            <li><strong>Mean Squared Error:</strong> {mse:.2f}</li>
+            <li><strong>R² Score:</strong> {r2:.2f}</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
