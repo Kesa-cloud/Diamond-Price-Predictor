@@ -1,12 +1,10 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import pickle
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
-import os
 
 # ---------------------------------------------
 # Page configuration
@@ -18,27 +16,40 @@ st.set_page_config(
 )
 
 # ---------------------------------------------
-# Custom CSS for creative styling
+# Custom CSS for rotating cyan backgrounds
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
 html, body, [class*="css"] {
     font-family: 'Montserrat', sans-serif;
-    background-image: url('https://images.unsplash.com/photo-1589330694655-d1256a5b6de8');
+    animation: backgroundSlide 30s infinite ease-in-out;
     background-size: cover;
     background-position: center;
-    color: #333333;
+    color: #222;
+    transition: background-image 1s ease-in-out;
+}
+
+@keyframes backgroundSlide {
+    0%, 33% {
+        background-image: url('https://images.unsplash.com/photo-1522770179533-24471fcdba45'); /* Cyan water */
+    }
+    33%, 66% {
+        background-image: url('https://images.unsplash.com/photo-1589330694655-d1256a5b6de8'); /* Gemstone */
+    }
+    66%, 100% {
+        background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e'); /* Crystal blue */
+    }
 }
 
 h1, h2, h3 {
-    background: linear-gradient(to right, #5A189A, #F72585);
+    background: linear-gradient(to right, #00bcd4, #2196f3);
     -webkit-background-clip: text;
     color: transparent;
 }
 
 .stButton>button {
-    background-color: #5A189A;
+    background-color: #00bcd4;
     color: white;
     border-radius: 8px;
     padding: 10px 24px;
@@ -46,12 +57,13 @@ h1, h2, h3 {
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
 }
 .stButton>button:hover {
-    background-color: #7B2CBF;
+    background-color: #2196f3;
 }
+
 .price-display {
     font-size: 36px;
     font-weight: bold;
-    color: #5A189A;
+    color: #00bcd4;
     margin: 10px 0;
 }
 </style>
@@ -66,7 +78,7 @@ st.markdown("Predict the price of your diamond based on its characteristics. Adj
 # Load and train model
 @st.cache_data
 def load_data_and_train_model():
-    data_path = "C:\\Users\\paulg\\Downloads\\archive (1)\diamonds.csv"
+    data_path = "diamonds.csv"  # <- Ensure diamonds.csv is in the same folder
     df = pd.read_csv(data_path).drop(columns=['Unnamed: 0'], errors='ignore')
     df = df.dropna()
 
@@ -161,7 +173,6 @@ if st.button("Predict Price"):
         "Dimensions": f"{x} × {y} × {z} mm"
     })
 
-    # ✅ Display model metrics after prediction
     st.markdown(f"""
     <div style="margin-top:40px;">
         <h3>Model Summary</h3>
